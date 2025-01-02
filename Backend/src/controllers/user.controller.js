@@ -58,7 +58,13 @@ const loginUser = async (req, res, next) => {
   res.status(200).json({ token, user });
 }
 
+// user profile
+const getUserProfile = async (req, res) => {
+  return res.status(200).json( req.user );
+}
+
 export {
   registerUser,
   loginUser,
+  getUserProfile,
 };
