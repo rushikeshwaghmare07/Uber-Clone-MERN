@@ -1,5 +1,6 @@
 import { captainModel } from "../models/captain.model.js";
 import createCaptain from "../services/captain.service.js";
+import { validationResult } from "express-validator";
 
 const registerCaptain = async (req, res, next) => {
   const errors = validationResult(req);
