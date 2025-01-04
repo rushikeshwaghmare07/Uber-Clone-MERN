@@ -274,6 +274,7 @@ This API allows authenticated users to log out of the application by invalidatin
 ```
 
 - **Error response (500)**
+
 ```json
 {
   "message": "Invalid token"
@@ -292,16 +293,17 @@ This API allows authenticated users to log out of the application by invalidatin
 
 1. **Token Validation:**
 
-    - Checks for the presence of a valid token in cookies or the `Authorization` header.
+   - Checks for the presence of a valid token in cookies or the `Authorization` header.
 
-    - Verifies the token using `jsonwebtoken` and checks if the token is blacklisted.
+   - Verifies the token using `jsonwebtoken` and checks if the token is blacklisted.
+
 2. **Token Blacklisting:**
-    - Adds the token to the `BlacklistToken` collection in the database with an expiration of 24 hours.
+   - Adds the token to the `BlacklistToken` collection in the database with an expiration of 24 hours.
 3. **Cookie Removal:**
-    - Clears the `token` cookie from the client.
+   - Clears the `token` cookie from the client.
 4. **Response:**
-    - Returns a success message confirming the logout.
-  
+   - Returns a success message confirming the logout.
+
 ---
 
 ### **Security Considerations**
@@ -311,4 +313,65 @@ This API allows authenticated users to log out of the application by invalidatin
 - **Token Blacklisting:** Ensures that even if a token is intercepted, it cannot be reused after logout.
 
 - **Token Expiry:** Blacklisted tokens expire automatically after 24 hours to maintain database performance.
+
+---
+
+## **User Profile** -
+
+### Overview
+
+Retrieves the profile information of the currently authenticated user.
+
+---
+
+### Endpoints
+
+- ### URL: `/api/v1/users/profile`
+- ### Method: `GET`
+- ### Authentication Required: Yes
+
+---
+
+### **Authentication**
+
+- Requires a valid JWT token in the Authorization header: `Authorization: Bearer <token>`
+
+---
+
+### Example Response:
+
+- **Success (200) -**
+
+```json
+{
+  "fullname": {
+    "firstname": "test_first",
+    "lastname": "test_last"
+  },
+  "email": "test@gmail.com"
+}
+```
+
+- **Error response (401) - Unauthorized**
+
+```json
+{
+  "message": "Unauthorized."
+}
+```
+
+- **Error response (500)**
+
+```json
+{
+  "message": "Invalid token"
+}
+```
+
+### **Error Handling**
+
+- **Unauthorized Access:** A `401` status is returned if the user provides no token or an invalid token..
+- **Authentication Errors:** A `401` status is returned if the email or password is incorrect.
+- **Invalid Token:** If the token is invalid or blacklisted, the API will return an error with a `401` or `500` status depending on the context.
+
 ---
