@@ -375,3 +375,143 @@ Retrieves the profile information of the currently authenticated user.
 - **Invalid Token:** If the token is invalid or blacklisted, the API will return an error with a `401` or `500` status depending on the context.
 
 ---
+
+# **Captain Endpoints -**
+
+## **Register Captain** -
+
+### Overview
+
+This API handles the registration of new captains for the application. A captain represents a driver with specific vehicle details.
+
+---
+
+### Endpoints
+
+- ### URL: `/api/v1/captains/register`
+- ### Method: `POST`
+
+---
+
+### Request Body:
+
+The request body must be in JSON format and include the following fields:
+
+```json
+{
+  "fullname": {
+    "firstname": "test_firstname",
+    "lastname": "test_laststname"
+  },
+  "email": "test@test.com",
+  "password": "securepassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+---
+
+### **Validation Rules**
+
+| Field                 | Rules                                 | Error Message                                   |
+| --------------------- | ------------------------------------- | ----------------------------------------------- |
+| `email`               | Must be a valid email                 | "Invalid email"                                 |
+| `fullname.firstname`  | Minimum 2 characters long             | "First name must be at least 2 characters long" |
+| `password`            | Minimum 6 characters long             | "Password must be at least 6 characters long"   |
+| `vehicle.color`       | Minimum 3 characters long             | "Color must be at least 3 characters long"      |
+| `vehicle.plate`       | Minimum 3 characters long             | "Plate must be at least 3 characters long"      |
+| `vehicle.capacity`    | Must be an integer ≥ 1                | "Capacity must be at least 1"                   |
+| `vehicle.vehicleType` | Must be one of: car, motorcycle, auto | "Invalid vehicle type"                          |
+
+---
+
+### Example Response:
+
+- **Success (201) -**
+
+```json
+{
+  "token": "jwt_token_here",
+  "captain": {
+    "_id": "64c1234abcd567ef9012gh34",
+    "fullname": {
+      "firstname": "test_firstname",
+      "lastname": "test_laststname"
+    },
+    "email": "test@test.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": "inactive"
+  }
+}
+```
+
+- **Error response (400)**
+
+```json
+{
+  "error": [
+    {
+      "msg": "Invalid email",
+      "param": "email",
+      "location": "body"
+    },
+    {
+      "msg": "First name must be at least 2 characters long.",
+      "param": "fullname.firstname",
+      "location": "body"
+    },
+    {
+      "msg": "Color must be at least 3 characters long",
+      "param": "vehicle.color",
+      "location": "body"
+    }
+  ]
+}
+```
+
+- **Error response (500)**
+
+```json
+{
+  "message": "Internal Server Error"
+}
+```
+
+### **Error Handling**
+
+- **Validation Errors:** A `400` status is returned with a list of validation errors.
+- **Duplicate Email:** A `400` status is returned if the email already exists in the database.
+- **Missing Fields or Server Issues:** A `500` status is returned with an appropriate message.
+
+---
+
+### **Behavior**
+
+1. Input Validation:
+  - Validates all incoming request fields using `express-validator`.
+
+2. Email Uniqueness:
+  - Ensures no existing captain is registered with the same email.
+
+3. Password Hashing:
+  - Passwords are securely hashed using `bcrypt` before being stored.
+
+4. Database Entry:
+  - Saves the captain's details, including vehicle information, to the database.
+
+5. Token Generation:
+  - Generates a JWT token for the captain.
+
+6. Response:
+  - Returns the newly registered captain’s details (excluding the password) and a JWT token.
+---
