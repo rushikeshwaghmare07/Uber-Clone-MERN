@@ -70,7 +70,7 @@ const captainSchema = new mongoose.Schema({
 });
 
 captainSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_TOKEN_EXPIRY,
   });
 
