@@ -632,3 +632,89 @@ The request body should be in JSON format and include the following fields:
 5. Sends the token and captain details (excluding the password) in the response.
 
 ---
+
+## **User Profile** -
+
+### Overview
+
+Retrieves the profile information of the currently authenticated user.
+
+---
+
+### Endpoints
+
+- ### URL: `/api/v1/captains/profile`
+- ### Method: `GET`
+- ### Authentication Required: Yes
+
+---
+
+### **Authentication**
+
+- Requires a valid JWT token in the Authorization header: `Authorization: Bearer <token>`
+
+---
+
+### Example Response:
+
+- **Success (200) -**
+
+```json
+{
+  "captain": {
+    "_id": "64c1234abcd567ef9012gh34",
+    "fullname": {
+      "firstname": "CaptainFirstName",
+      "lastname": "CaptainLastName"
+    },
+    "email": "captain@example.com",
+    "status": "active",
+    "vehicle": {
+      "color": "red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "location": {
+      "ltd": 37.7749,
+      "lng": -122.4194
+    }
+  }
+}
+
+```
+
+- **Error response (401) - Unauthorized**
+
+```json
+{
+  "message": "Unauthorized."
+}
+```
+
+- **Error response (500)**
+
+```json
+{
+  "message": "Internal Server Error"
+}
+
+```
+
+### **Error Handling**
+
+- **Unauthorized Access:** A `401` status is returned if the user provides no token or an invalid token..
+- **Authentication Errors:** A `401` status is returned if the email or password is incorrect.
+- **Invalid Token:** If the token is invalid or blacklisted, the API will return an error with a `401` or `500` status depending on the context.
+
+---
+
+### **Behavior**
+
+1. Verifies the token provided in the `Authorization` header or cookies.
+2. Checks if the token is blacklisted.
+3. Decodes the token to retrieve the captain's ID.
+4. Fetches the captain's data from the database.
+5. Returns the captain's profile information (excluding sensitive fields like `password`).
+
+---
