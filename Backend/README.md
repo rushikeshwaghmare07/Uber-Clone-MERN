@@ -515,3 +515,120 @@ The request body must be in JSON format and include the following fields:
 6. Response:
   - Returns the newly registered captain’s details (excluding the password) and a JWT token.
 ---
+
+
+
+## **Login Captain** -
+
+### Overview
+
+This API allows captains to log in to the system by providing their email and password
+---
+
+### Endpoints
+
+- ### URL: `/api/v1/captains/login`
+- ### Method: `POST`
+
+---
+
+### Request Body:
+
+The request body should be in JSON format and include the following fields:
+
+```json
+{
+  "email": "captain@example.com",
+  "password": "securepassword"
+}
+```
+
+---
+
+### **Validation Rules**
+
+| Field      | Rules                     | Error Message                                 |
+| ---------- | ------------------------- | --------------------------------------------- |
+| `email`    | Must be a valid email     | "Invalid email"                               |
+| `password` | Minimum 6 characters long | "Password must be at least 6 characters long" |
+
+---
+
+### Example Response:
+
+- **Success (200) -**
+
+```json
+{
+  "token": "jwt_token_here",
+  "captain": {
+    "_id": "64c1234abcd567ef9012gh34",
+    "fullname": {
+      "firstname": "CaptainFirstName",
+      "lastname": "CaptainLastName"
+    },
+    "email": "captain@example.com",
+    "status": "active",
+    "vehicle": {
+      "color": "red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+
+```
+
+- **Error response (400)**
+
+```json
+{
+  "error": [
+    {
+      "msg": "Invalid email",
+      "param": "email",
+      "location": "body"
+    },
+    {
+      "msg": "Password must be at least 6 characters long.",
+      "param": "password",
+      "location": "body"
+    }
+  ]
+}
+```
+
+- **Error response (401)**
+
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+- **Error response (500)**
+
+```json
+{
+  "message": "Internal Server Error"
+}
+```
+
+### **Error Handling**
+
+- **Validation Errors:** A `400` status is returned with a list of validation errors.
+- **Authentication Errors:** A `401` status is returned if the email or password is incorrect.
+- **Server Errors:** A `500` status is returned with an appropriate message in case of server-side issues..
+
+---
+
+### **Behavior**
+
+1. Validates the incoming request using `express-validator`.
+2. Checks if the captain exists in the database.
+3. Compares the provided password with the hashed password stored in the database using `bcrypt`.
+4. Generates a JWT token for the captain upon successful login.
+5. Sends the token and captain details (excluding the password) in the response.
+
+---
