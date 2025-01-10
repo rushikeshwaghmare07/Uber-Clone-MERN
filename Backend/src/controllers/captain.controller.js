@@ -61,4 +61,8 @@ const loginCaptain = async (req, res) => {
   res.status(200).json({ token, captain });
 };
 
-export { registerCaptain, loginCaptain };
+const getCaptainProfile = async (req, res) => {
+  res.status(200).json({ captain: req.captain });
+}
+
+export { registerCaptain, loginCaptain, getCaptainProfile };

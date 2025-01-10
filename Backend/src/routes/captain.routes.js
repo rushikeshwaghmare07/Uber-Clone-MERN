@@ -3,7 +3,9 @@ import { body } from "express-validator";
 import {
   registerCaptain,
   loginCaptain,
+  getCaptainProfile,
 } from "../controllers/captain.controller.js";
+import { authCaptain } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -43,5 +45,7 @@ router.post(
   ],
   loginCaptain
 );
+
+router.get("/profile", authCaptain, getCaptainProfile);
 
 export default router;
