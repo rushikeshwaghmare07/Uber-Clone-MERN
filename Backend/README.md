@@ -523,6 +523,7 @@ The request body must be in JSON format and include the following fields:
 ### Overview
 
 This API allows captains to log in to the system by providing their email and password
+
 ---
 
 ### Endpoints
@@ -716,5 +717,91 @@ Retrieves the profile information of the currently authenticated user.
 3. Decodes the token to retrieve the captain's ID.
 4. Fetches the captain's data from the database.
 5. Returns the captain's profile information (excluding sensitive fields like `password`).
+
+---
+
+## **Logout Captain** -
+
+### Overview
+
+This API allows authenticated captain to log out of the application by invalidating their JWT token and removing it from the client-side cookies. Blacklisted tokens are stored to prevent reuse.
+
+---
+
+### Endpoints
+
+- ### URL: `/api/v1/captains/logout`
+- ### Method: `GET`
+- ### Authentication Required: Yes
+
+---
+
+### **Headers**
+
+| Key             |     | Value                                           |
+| --------------- | --- | ----------------------------------------------- |
+| `Authorization` |     | Bearer `<your_authentication_token>  `          |
+| `Cookie`        |     | `"Password must be at least 6 characters long"` |
+
+---
+
+### Example Response:
+
+- **Success (200) -**
+
+```json
+{
+  "message": "Logout successfully"
+}
+```
+
+- **Error response (401) - Unauthorized**
+
+```json
+{
+  "message": "Unauthorized."
+}
+```
+
+- **Error response (500)**
+
+```json
+{
+  "message": "Invalid token"
+}
+```
+
+### **Error Handling**
+
+- **Unauthorized Access:** A `401` status is returned if the user provides no token or an invalid token..
+- **Authentication Errors:** A `401` status is returned if the email or password is incorrect.
+- **Invalid Token:** If the token is invalid or blacklisted, the API will return an error with a `401` or `500` status depending on the context.
+
+---
+
+### **Behavior**
+
+1. **Token Validation:**
+
+   - Checks for the presence of a valid token in cookies or the `Authorization` header.
+
+   - Verifies the token using `jsonwebtoken` and checks if the token is blacklisted.
+
+2. **Token Blacklisting:**
+   - Adds the token to the `BlacklistToken` collection in the database with an expiration of 24 hours.
+3. **Cookie Removal:**
+   - Clears the `token` cookie from the client.
+4. **Response:**
+   - Returns a success message confirming the logout.
+
+---
+
+### **Security Considerations**
+
+- **HTTP-only Cookies:** The token is stored in an HTTP-only cookie, minimizing the risk of XSS attacks.
+
+- **Token Blacklisting:** Ensures that even if a token is intercepted, it cannot be reused after logout.
+
+- **Token Expiry:** Blacklisted tokens expire automatically after 24 hours to maintain database performance.
 
 ---
