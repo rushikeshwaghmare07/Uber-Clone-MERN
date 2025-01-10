@@ -4,6 +4,7 @@ import {
   registerCaptain,
   loginCaptain,
   getCaptainProfile,
+  logoutCaptain,
 } from "../controllers/captain.controller.js";
 import { authCaptain } from "../middleware/auth.middleware.js";
 
@@ -47,5 +48,7 @@ router.post(
 );
 
 router.get("/profile", authCaptain, getCaptainProfile);
+
+router.get("/logout", authCaptain, logoutCaptain)
 
 export default router;
